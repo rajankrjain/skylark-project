@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+    <link rel="stylesheet" href="./iframe-lightbox.css">
 
 
     <style>
@@ -39,9 +39,15 @@
     
 </div>
 <div class='map-overlay-container'>
-    <div class="container">
-        <button type="button" class="btn btn-primary btn-lg"><a href="1992.html">Watch the Winning Moments</a></button>
-    </div>
+        <h2><a href="javascript:void(0);" class="iframe-lightbox-link" data-src="https://www.youtube.com/embed/rL4xKdqyMgY" data-padding-bottom="56.25%">Watch The Winning moments Here</a></h2>
+	
+	
+        <script src="./iframe-lightbox.js"></script>
+        <script>
+            [].forEach.call(document.getElementsByClassName("iframe-lightbox-link"), function(el) {
+                el.lightbox = new IframeLightbox(el);
+            });
+        </script>
 </div>
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoicmFqYW5qYWluIiwiYSI6ImNqams1aHZibzV0cGkzd3MyZmVieXlrM24ifQ.7FmMBbWLsE87zluI-YvP5g';

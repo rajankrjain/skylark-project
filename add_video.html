@@ -11,15 +11,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
 </head>
 <body>
 
 <style>
-
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
 .map-overlay-container {
     position: absolute;
     width: 25%;
@@ -29,29 +26,35 @@
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     z-index: 1;
 }
+.map-overlay {
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.20);
+}
 
-
+.map-overlay h2,
+.map-overlay p {
+    margin: 0 0 10px;
+}
 </style>
 
 <div id='map'></div>
-
 <div class='map-overlay-container'>
-    <h2><marquee behavior="slide" direction="right" bgcolor="#93BEF9" font color="#FFFFFF" height="50px" width="180%" id='location-title'></marquee></h2>
-    <p><marquee behavior="slide" direction="right" bgcolor="#93BEF9" font color="#FFFFFF" height="50px" width="160%" id='location-description'></marquee><p>
-    
+    <div class='map-overlay'>
+        <h2 id='location-title'></h2>
+        <p id='location-description'></p>
+    </div>
     <div class="container">
-            
         <button type="button" class="btn"><a href="ex.html">Basic</a></button>
-            
         <button type="button" class="btn btn-info">Info</button>
-            
     </div>
     <div class="container">
         <div id="container-within" style="display:inline-block; ">    
     </div>
 </div>
     
-</div>
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoicmFqYW5qYWluIiwiYSI6ImNqams1aHZibzV0cGkzd3MyZmVieXlrM24ifQ.7FmMBbWLsE87zluI-YvP5g';
@@ -78,7 +81,7 @@ var locations = [{
         pitch: 50,
         
     }
-},  {
+},{
     "id": "2",
     "title": "Australia and New Zeland",
     "url":"aus.html",
@@ -115,11 +118,41 @@ var locations = [{
     "description": "New York City is made up of five boroughs: the Bronx, Brooklyn, Manhattan, Queens and Staten Island. Each one has enough attractions—and enough personality—to be a city all its own.",
     "camera": {
         center: [22.9375, -30.5595],
-        zoom: 4,
+        zoom: 5,
         bearing: 0
     }
 },{
     "id": "6",
+    "title": "West Indies",
+    "url":"wi.html",
+    "description": "New York City is made up of five boroughs: the Bronx, Brooklyn, Manhattan, Queens and Staten Island. Each one has enough attractions—and enough personality—to be a city all its own.",
+    "camera": {
+        center: [-61.2225, 10.6918],
+        zoom: 6,
+        bearing: 0
+    }
+}, {
+    "id": "7",
+    "title": "India Pakistan Srilanka",
+    "url":"ind_pak_sl.html",
+    "description": "Taste food from around the globe, watch Mets baseball and US Open tennis, see cutting-edge art and more in one of the world's most diverse places.",
+    "camera": {
+        center: [78.9629, 20.5937],
+        bearing: 36,
+        zoom: 4
+    }
+}, {
+    "id": "8",
+    "title": "Australia and New Zeland",
+    "url":"aus.html",
+    "description": "Even if you think you know Manhattan—its world-class museums, fine dining and unforgettable views—the borough always has something new and exciting in store.",
+    "camera": {
+        center: [133.7751, -25.2744],
+        bearing: 25.3,
+        zoom: 4
+    }
+},{
+    "id": "9",
     "title": "England",
     "url":"england.html",
     "description": "The first 3 world cups were played in england 1975,1979,1983 ",
@@ -131,11 +164,44 @@ var locations = [{
 }];
 
 
-
 function playback(index) {
     title.textContent = locations[index].title;
     description.textContent = locations[index].description;
+    forbutton(index)
+    // Animate the map position based on camera properties
+    map.flyTo(locations[index].camera);
+    
+    map.once('moveend', function() {
+        // Duration the slide is on screen after interaction
+        window.setTimeout(function() {
+            // Increment index
+            index = (index + 1 === locations.length) ? 0 : index + 1;
+            playback(index);
+        }, 9000); // After callback, show the location for 3 seconds.
+    });
+}
 
+// Display the last title/description first
+title.textContent = locations[locations.length - 1].title;
+description.textContent = locations[locations.length - 1].description;
+forbutton(locations.length - 1)
+
+map.on('load', function() {
+    window.setTimeout(function(){
+        playback(0);
+    },9000);
+    
+});
+function placeDiv(x_pos, y_pos) {
+    var d = document.getElementById('container-within');
+    d.style.position = "absolute";
+    d.style.left = x_pos+'vh';
+    d.style.top = y_pos+'vh';
+}
+
+
+function forbutton(index)
+{
     name = locations[index].url;
     name1=locations[index].title;
     name1="watch the "+name1+" locations";
@@ -167,36 +233,7 @@ function playback(index) {
     }
     
     placeDiv(80,80);
-     // Animate the map position based on camera properties
-    map.flyTo(locations[index].camera);
-    
-    map.once('moveend', function() {
-        // Duration the slide is on screen after interaction
-        window.setTimeout(function() {
-            // Increment index
-            index = (index + 1 === locations.length) ? 0 : index + 1;
-            playback(index);
-        }, 9000); // After callback, show the location for 3 seconds.
-    });
 }
-
-// Display the last title/description first
-title.textContent = locations[locations.length - 1].title;
-description.textContent = locations[locations.length - 1].description;
-
-
-map.on('load', function() {
-    window.setTimeout(function(){
-        playback(0);
-    },9000);
-    
-});
-function placeDiv(x_pos, y_pos) {
-            var d = document.getElementById('container-within');
-            d.style.position = "absolute";
-            d.style.left = x_pos+'vh';
-            d.style.top = y_pos+'vh';
-            }
 
 </script>
 

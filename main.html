@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Locations as a slideshow</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+</head>
+<body>
+
+<style>
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+.map-overlay-container {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    z-index: 1;
+}
+.map-overlay {
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.20);
+}
+
+.map-overlay h2,
+.map-overlay p {
+    margin: 0 0 10px;
+}
+</style>
+
+<div id='map'></div>
+<div class='map-overlay-container'>
+    <div class='map-overlay'>
+        <h2 id='location-title' style="font-family:verdana;"></h2>
+    </div>
+    <div class='map-overlay'>
+        <p id='location-description'></p>
+    </div>
+    <div class="container">
+        <div id="container-within" style="display:inline-block; ">    
+    </div>
+</div>
+    
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoicmFqYW5qYWluIiwiYSI6ImNqams1aHZibzV0cGkzd3MyZmVieXlrM24ifQ.7FmMBbWLsE87zluI-YvP5g';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    center: [-0.9,52.3555],
+    maxZoom: 16,
+    minZoom: 0.1,
+    zoom: 6
+});
+
+var title = document.getElementById('location-title');
+var description = document.getElementById('location-description');
+
+var locations = [{
+    "id": "1",
+    "title": "India",
+    "url":"india.html",
+    "description": "Defending Champions hosted the world cup but this time AUSTRALIA were crowned the champions",
+    "camera": {
+        center: [78.9629, 20.5937],
+        zoom: 4,
+        pitch: 50,
+        
+    }
+},{
+    "id": "2",
+    "title": "Australia and New Zealand",
+    "url":"aus.html",
+    "description": "Unbeatable Australia hosted the cup but the Pakistan team got the trophy",
+    "camera": {
+        center: [133.7751, -25.2744],
+        bearing: 25.3,
+        zoom: 4
+    }
+}, {
+    "id": "3",
+    "title": "India Pakistan Srilanka",
+    "url":"ind_pak_sl.html",
+    "description": "This time the Lankans were crowned the world champion",
+    "camera": {
+        center: [78.9629, 20.5937],
+        bearing: 36,
+        zoom: 4
+    }
+}, {
+    "id": "4",
+    "title": "England and Wales",
+    "url":"england_wales.html",
+    "description": "Aussies won their Second cup defeating Pakistan in the finals",
+    "camera": {
+        center: [-0.9,52.3555],
+        bearing: 28.4,
+        zoom: 6
+    }
+}, {
+    "id": "5",
+    "title": "South Africa",
+    "url":"sa.html",
+    "description": "3rd cup for Autralia as they defeated India in a one sided final",
+    "camera": {
+        center: [22.9375, -30.5595],
+        zoom: 5,
+        bearing: 0
+    }
+},{
+    "id": "6",
+    "title": "West Indies",
+    "url":"wi.html",
+    "description": "Hat-Trick for Australia as they clich the victory by defeating Srilanka in final",
+    "camera": {
+        center: [-61.2225, 10.6918],
+        zoom: 6,
+        bearing: 0
+    }
+}, {
+    "id": "7",
+    "title": "India Srilanka Bangladesh",
+    "url":"ind_sl_bang.html",
+    "description": "DHONI finishes off in style and India becomes world champion",
+    "camera": {
+        center: [78.9629, 20.5937],
+        bearing: 36,
+        zoom: 4
+    }
+}, {
+    "id": "8",
+    "title": "Australia and New Zealand",
+    "url":"aus2.html",
+    "description": "Australia win their 5th cup after defeating New Zealand in the final",
+    "camera": {
+        center: [133.7751, -25.2744],
+        bearing: 25.3,
+        zoom: 4
+    }
+},{
+    "id": "9",
+    "title": "England",
+    "url":"england.html",
+    "description": "The first 3 world cups were played in england 1975,1979,1983 winners being WI,WI,INDIA ",
+    "camera": {
+        center: [-0.9,52.3555],
+        bearing: -8.9,
+        zoom: 6
+    }
+}];
+
+
+function playback(index) {
+    title.textContent = locations[index].title;
+    description.textContent = locations[index].description;
+    forbutton(index)
+    // Animate the map position based on camera properties
+    map.flyTo(locations[index].camera);
+    
+    map.once('moveend', function() {
+        // Duration the slide is on screen after interaction
+        window.setTimeout(function() {
+            // Increment index
+            index = (index + 1 === locations.length) ? 0 : index + 1;
+            playback(index);
+        }, 9000); // After callback, show the location for 3 seconds.
+    });
+}
+
+// Display the last title/description first
+title.textContent = locations[locations.length - 1].title;
+description.textContent = locations[locations.length - 1].description;
+forbutton(locations.length - 1)
+
+map.on('load', function() {
+    window.setTimeout(function(){
+        playback(0);
+    },9000);
+    
+});
+function placeDiv(x_pos, y_pos) {
+    var d = document.getElementById('container-within');
+    d.style.position = "absolute";
+    d.style.left = x_pos+'vh';
+    d.style.top = y_pos+'vh';
+}
+
+
+function forbutton(index)
+{
+    name = locations[index].url;
+    name="locations"+"/"+ name;
+    name1=locations[index].title;
+    name1="Click to view "+name1+"'s Match locations";
+    var btn = document.getElementById("container-within");
+                
+    if($('#name-btn').length > 0){
+        
+    var check = document.getElementById('name-btn');
+    var t = document.createTextNode(name1);
+    check.replaceChild(t, check.childNodes[0]);
+    check.removeEventListener("click", function(){});
+    
+    check.addEventListener("click", function(){
+        
+        window.open(name, "_self");
+    });
+    } else {
+        var btn = document.createElement("BUTTON");        // Create a <button> element
+        var t = document.createTextNode(name1);
+        btn.setAttribute("id", "name-btn");       // Create a text node
+        btn.appendChild(t);                                // Append the text to <button>
+        btn.setAttribute( "class", "btn btn-success");
+        btn.removeEventListener("click", function(){});
+        
+        document.getElementById("container-within").appendChild(btn);  
+        btn.addEventListener("click", function(){
+            window.open(name, "_self");
+        });
+    }
+    
+    placeDiv(80,80);
+}
+
+</script>
+
+</body>
+</html>
